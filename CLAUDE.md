@@ -1,0 +1,98 @@
+# RyzeSport
+
+Website toko online sepatu (running, sport, casual). Proyek portofolio, harus bisa dilihat publik.
+
+Aplikasi terdiri dari 2 bagian:
+1. **Storefront (e-commerce)**: dikerjakan sekarang.
+2. **Admin/Owner**: dikerjakan belakangan (CRUD produk, update status pesanan). Jangan dibuat dulu kecuali diminta.
+
+## Tech Stack
+
+- **Frontend:** React (Vite) + React Router + Tailwind CSS
+- **Backend:** Node.js + Express (REST API)
+- **Database:** PostgreSQL di Neon (driver `pg`)
+- **Auth:** JWT + bcrypt untuk hash password
+- **Gambar produk:** Cloudinary (foto dari Unsplash/Pexels)
+- **Deploy:** Vercel
+
+## Struktur Folder
+
+```
+ryzesport/
+├── client/        # React storefront
+├── server/        # Express API
+│   ├── routes/
+│   ├── controllers/
+│   ├── middleware/
+│   └── db/        # koneksi, migration .sql, seed .sql
+└── admin/         # (nanti) aplikasi owner
+```
+
+## Perintah
+
+- `cd client && npm run dev`: jalankan frontend
+- `cd server && npm run dev`: jalankan API
+- Variabel rahasia (`DATABASE_URL`, `JWT_SECRET`, dll) ada di file `.env`, **jangan pernah di-commit**.
+
+## Aturan Bisnis (WAJIB diikuti)
+
+- Pengunjung boleh melihat produk dan menambah ke keranjang **tanpa login** (keranjang disimpan di localStorage).
+- **Checkout WAJIB login/punya akun.** Saat tamu klik checkout, tampilkan notifikasi/modal untuk login atau daftar. Setelah login, keranjang localStorage digabung ke database.
+- Detail produk: user wajib memilih **warna** dan **ukuran** sebelum bisa add to cart / beli. Tombol nonaktif jika stok varian = 0.
+- Form checkout: nama penerima, telepon, alamat lengkap, kurir, metode bayar.
+  - Kurir: `JNT`, `JNE`
+  - Metode bayar: `BCA`, `BRI`, `VIRTUAL_ACCOUNT` (**simulasi saja**, tidak ada payment gateway asli)
+- Menu **"Pesanan Saya"**: user melihat daftar pesanan, item yang dibeli, status, nomor resi, dan riwayat status.
+- Update status pesanan dilakukan dari aplikasi Admin (nanti). Di storefront status hanya dibaca.
+
+## Database
+
+Konvensi:
+- Nama tabel diawali `t_` dan berbentuk jamak, contoh `t_products`.
+- Primary key `id` (SERIAL/BIGSERIAL). Setiap tabel punya `created_at` dan `updated_at`.
+- Harga disimpan dalam Rupiah sebagai `INTEGER` (tanpa desimal).
+- Selalu pakai **parameterized query** (`$1, $2`), jangan menyambung string SQL.
+
+Tabel inti:
+- `t_users`: email (unik), password_hash, nama, telepon
+- `t_addresses`: alamat milik user
+- `t_categories`: running, sport, casual
+- `t_products`: nama, slug, deskripsi, harga, category_id, is_active
+- `t_product_colors`: warna per produk + URL foto per warna
+- `t_product_variants`: kombinasi warna × ukuran, stok, SKU
+- `t_carts`, `t_cart_items`: keranjang user yang sudah login
+- `t_orders`: no_order, user_id (**NOT NULL**), data penerima, kurir, metode_bayar, no_resi, total, status
+- `t_order_items`: variant_id, qty, **harga saat beli** (snapshot, jangan ambil dari t_products)
+- `t_order_status_history`: order_id, status, catatan, waktu
+
+Alur status pesanan:
+`MENUNGGU_PEMBAYARAN` → `DIBAYAR` → `DIPROSES` → `DIKIRIM` → `SELESAI`
+(bisa juga `DIBATALKAN`). Saat `DIKIRIM`, `no_resi` wajib terisi.
+
+Checkout harus dalam **satu transaksi DB**: buat order, simpan item, kurangi stok, kosongkan keranjang. Jika stok kurang, rollback semuanya.
+
+## Arah Desain
+
+- Gaya modern, bold, dan minimalis (inspirasi layout toko sepatu olahraga besar).
+- Dominan hitam-putih dengan satu warna aksen. Tipografi tebal untuk judul.
+- Mobile-first dan responsif.
+- **Jangan** memakai logo, nama brand, foto, atau teks milik brand lain (Nike, Adidas, dll). Semua produk memakai nama fiktif RyzeSport, contoh "Ryze Velocity 3".
+
+## Gaya Kode
+
+- JavaScript (ES modules), `async/await`, bukan callback.
+- Komponen React berupa function component, satu komponen per file.
+- Teks yang tampil ke user memakai Bahasa Indonesia.
+- Validasi input di backend, jangan hanya di frontend.
+- Format harga di UI: `Rp 1.299.000`.
+
+## Progres
+
+- [x] Setup repo, Neon, migration + seed data
+- [ ] Beranda + daftar produk + filter kategori
+- [ ] Detail produk (warna, ukuran, stok)
+- [ ] Keranjang
+- [ ] Register / login
+- [ ] Checkout (wajib login)
+- [ ] Pesanan Saya + riwayat status
+- [ ] (Nanti) Aplikasi Admin
