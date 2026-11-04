@@ -4,6 +4,56 @@ const SLUG_PATTERN = /^[a-z0-9-]+$/;
 const MAX_LIMIT = 50;
 const SEGMEN = { pria: 'PRIA', wanita: 'WANITA', anak: 'ANAK' };
 
+export async function getProduct(req, res) {
+  const { slug } = req.params;
+
+  if (!SLUG_PATTERN.test(slug)) {
+    return res.status(400).json({ message: 'Produk tidak valid.' });
+  }
+
+  const { rows } = await query(
+    `SELECT
+       p.id,
+       p.nama,
+       p.slug,
+       p.deskripsi,
+       p.harga,
+       p.segmen,
+       p.is_trending,
+       b.nama AS merek,
+       c.nama AS kategori,
+       c.slug AS kategori_slug
+     FROM t_products p
+     JOIN t_categories c ON c.id = p.category_id
+     JOIN t_brands b ON b.id = p.brand_id
+     WHERE p.slug = $1 AND p.is_active`,
+    [slug],
+  );
+
+  if (rows.length === 0) {
+    return res.status(404).json({ message: 'Produk tidak ditemukan.' });
+  }
+
+  const { rows: warna } = await query(
+    `SELECT
+       pc.id,
+       pc.nama_warna,
+       pc.foto_url,
+       json_agg(
+         json_build_object('id', v.id::text, 'ukuran', v.ukuran, 'stok', v.stok)
+         ORDER BY v.ukuran
+       ) AS varian
+     FROM t_product_colors pc
+     JOIN t_product_variants v ON v.color_id = pc.id
+     WHERE pc.product_id = $1
+     GROUP BY pc.id
+     ORDER BY pc.id`,
+    [rows[0].id],
+  );
+
+  res.json({ data: { ...rows[0], warna } });
+}
+
 export async function listProducts(req, res) {
   const { kategori, segmen, trending, limit } = req.query;
 

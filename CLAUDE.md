@@ -95,7 +95,7 @@ Checkout harus dalam **satu transaksi DB**: buat order, simpan item, kurangi sto
 
 - [x] Setup repo, Neon, migration + seed data
 - [x] Beranda + daftar produk + filter kategori
-- [ ] Detail produk (warna, ukuran, stok)
+- [x] Detail produk (warna, ukuran, stok)
 - [ ] Keranjang
 - [ ] Register / login
 - [ ] Checkout (wajib login)
