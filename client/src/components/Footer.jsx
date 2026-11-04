@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
   return (
     <footer className="mt-16 bg-neutral-950 text-neutral-400">
@@ -5,7 +7,12 @@ export default function Footer() {
         <p className="font-display font-black tracking-tight text-white">
           RYZE<span className="text-accent">SPORT</span>
         </p>
-        <p>Proyek portofolio. Merek dan nama produk adalah milik pemiliknya masing-masing.</p>
+        <p>
+          Proyek portofolio. Merek dan nama produk adalah milik pemiliknya masing-masing.{' '}
+          <Link to="/kredit-foto" className="underline hover:text-white">
+            Kredit foto
+          </Link>
+        </p>
       </div>
     </footer>
   );

@@ -3,6 +3,7 @@ import { addToCart } from '../lib/cart.js';
 import { formatRupiah } from '../lib/format.js';
 import { SEGMENT_LABELS } from '../lib/segments.js';
 import ColorPicker from './ColorPicker.jsx';
+import IllustrationTag from './IllustrationTag.jsx';
 import SizePicker from './SizePicker.jsx';
 
 function buttonLabel(color, size, variant) {
@@ -44,14 +45,15 @@ export default function ProductDetail({ product }) {
 
   return (
     <div className="grid gap-8 md:grid-cols-2 md:gap-12">
-      <div className="aspect-square bg-neutral-100">
+      <div className="relative aspect-square bg-neutral-100">
         <img
           src={foto.foto_url}
           alt={`${namaLengkap} warna ${foto.nama_warna}`}
           width="800"
           height="800"
-          className="h-full w-full object-cover"
+          className="h-full w-full object-contain"
         />
+        {foto.foto_ilustrasi ? <IllustrationTag /> : null}
       </div>
 
       <div>

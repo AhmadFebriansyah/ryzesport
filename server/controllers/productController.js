@@ -14,6 +14,15 @@ const URUTAN_WARNA = `(
     WHERE sv.color_id = pc.id AND o.status <> 'DIBATALKAN'
   ) DESC, hashtextextended(pc.id::text, 0)`;
 
+export async function listPhotoCredits(_req, res) {
+  const { rows } = await query(
+    `SELECT DISTINCT ON (foto_url) foto_url, foto_kredit, foto_lisensi, foto_sumber_url
+     FROM t_product_colors
+     ORDER BY foto_url`,
+  );
+  res.json({ data: rows });
+}
+
 export async function getProduct(req, res) {
   const { slug } = req.params;
 
@@ -49,6 +58,7 @@ export async function getProduct(req, res) {
        pc.id,
        pc.nama_warna,
        pc.foto_url,
+       pc.foto_ilustrasi,
        json_agg(
          json_build_object('id', v.id::text, 'ukuran', v.ukuran, 'stok', v.stok)
          ORDER BY v.ukuran
@@ -105,6 +115,7 @@ export async function listProducts(req, res) {
        c.nama AS kategori,
        c.slug AS kategori_slug,
        warna.foto_url,
+       warna.foto_ilustrasi,
        warna.jumlah_warna,
        warna.tersedia
      FROM t_products p
@@ -113,6 +124,7 @@ export async function listProducts(req, res) {
      CROSS JOIN LATERAL (
        SELECT
          (array_agg(pc.foto_url ORDER BY ${URUTAN_WARNA}))[1] AS foto_url,
+         (array_agg(pc.foto_ilustrasi ORDER BY ${URUTAN_WARNA}))[1] AS foto_ilustrasi,
          count(*)::int AS jumlah_warna,
          EXISTS (
            SELECT 1

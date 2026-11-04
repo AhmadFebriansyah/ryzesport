@@ -4,6 +4,11 @@ export function notFound(_req, res) {
 
 // Express butuh 4 parameter untuk mengenali error handler.
 export function errorHandler(err, _req, res, _next) {
+  // Error dari klien, misalnya body JSON yang rusak.
+  if (err.status >= 400 && err.status < 500) {
+    return res.status(err.status).json({ message: 'Permintaan tidak valid.' });
+  }
+
   console.error(err);
-  res.status(500).json({ message: 'Terjadi kesalahan pada server.' });
+  return res.status(500).json({ message: 'Terjadi kesalahan pada server.' });
 }

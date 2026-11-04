@@ -12,7 +12,7 @@ Aplikasi terdiri dari 2 bagian:
 - **Backend:** Node.js + Express (REST API)
 - **Database:** PostgreSQL di Neon (driver `pg`)
 - **Auth:** JWT + bcrypt untuk hash password
-- **Gambar produk:** Cloudinary (foto dari Unsplash/Pexels)
+- **Gambar produk:** `client/public/produk` (foto berlisensi bebas dari Wikimedia Commons). Pindah ke Cloudinary jika kredensial tersedia.
 - **Deploy:** Vercel
 
 ## Struktur Folder
@@ -61,7 +61,7 @@ Tabel inti:
 - `t_categories`: running, sport, casual
 - `t_brands`: merek sepatu (nama, slug)
 - `t_products`: nama, slug, deskripsi, harga, category_id, brand_id, segmen (`PRIA`, `WANITA`, `ANAK`), is_trending, is_active
-- `t_product_colors`: warna per produk + URL foto per warna
+- `t_product_colors`: warna per produk, URL foto, penanda foto ilustrasi, kredit, lisensi, dan sumber foto
 - `t_product_variants`: kombinasi warna × ukuran, stok, SKU
 - `t_carts`, `t_cart_items`: keranjang user yang sudah login
 - `t_orders`: no_order, user_id (**NOT NULL**), data penerima, kurir, metode_bayar, no_resi, total, status
@@ -80,7 +80,8 @@ Checkout harus dalam **satu transaksi DB**: buat order, simpan item, kurangi sto
 - Dominan hitam-putih dengan satu warna aksen. Tipografi tebal untuk judul.
 - Mobile-first dan responsif.
 - Nama merek dan model asli boleh dipakai untuk menyebut produk, contoh "Nike Pegasus 41".
-- **Jangan** menyalin deskripsi atau foto dari situs resmi merek. Deskripsi ditulis sendiri, foto dari Unsplash/Pexels.
+- **Jangan** menyalin deskripsi atau foto dari situs resmi merek. Deskripsi ditulis sendiri, foto harus berlisensi bebas dan kreditnya tampil di `/kredit-foto`.
+- Nama warna harus sama dengan foto. Foto seri atau model lain wajib berlabel "Foto ilustrasi".
 - **Jangan** memakai logo merek sebagai hiasan atau memberi kesan mitra resmi.
 - Pemberitahuan "proyek portofolio, tidak ada penjualan atau pembayaran nyata" harus selalu terlihat di situs.
 
@@ -98,7 +99,7 @@ Checkout harus dalam **satu transaksi DB**: buat order, simpan item, kurangi sto
 - [x] Beranda + daftar produk + filter kategori
 - [x] Detail produk (warna, ukuran, stok)
 - [x] Keranjang (tamu, localStorage). Penggabungan ke database dikerjakan bersama login.
-- [ ] Register / login
+- [x] Register / login
 - [ ] Checkout (wajib login)
 - [ ] Pesanan Saya + riwayat status
 - [ ] (Nanti) Aplikasi Admin

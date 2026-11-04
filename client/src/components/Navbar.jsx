@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../hooks/useCart.js';
+import { useSession } from '../hooks/useSession.js';
 import { productsPath, SEGMENTS } from '../lib/segments.js';
+import { logout } from '../lib/session.js';
 
 export default function Navbar() {
   const cart = useCart();
+  const { user, ready } = useSession();
   const jumlah = cart.reduce((sum, item) => sum + item.qty, 0);
 
   return (
@@ -22,9 +25,21 @@ export default function Navbar() {
             </Link>
           ))}
         </nav>
-        <Link to="/keranjang" className="whitespace-nowrap text-sm font-semibold hover:text-accent">
-          Keranjang ({jumlah})
-        </Link>
+        <div className="flex items-center gap-4 text-sm font-semibold">
+          {ready && !user ? (
+            <Link to="/masuk" className="whitespace-nowrap hover:text-accent">
+              Masuk
+            </Link>
+          ) : null}
+          {user ? (
+            <button type="button" onClick={logout} className="whitespace-nowrap hover:text-accent">
+              Keluar
+            </button>
+          ) : null}
+          <Link to="/keranjang" className="whitespace-nowrap hover:text-accent">
+            Keranjang ({jumlah})
+          </Link>
+        </div>
       </div>
     </header>
   );

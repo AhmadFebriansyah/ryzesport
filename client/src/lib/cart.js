@@ -1,18 +1,26 @@
+import { apiRequest } from './api.js';
+
 const CART_KEY = 'ryzesport_cart_v1';
 
 const listeners = new Set();
 let cache = null;
+let serverToken = null;
+// Antrian agar perubahan keranjang sampai ke server sesuai urutan klik.
+let syncQueue = Promise.resolve();
+
+const isValidItem = (item) =>
+  typeof item?.variantId === 'string' && Number.isInteger(item.qty) && item.qty > 0 && item.qty < 100;
 
 function readCart() {
   try {
     const items = JSON.parse(localStorage.getItem(CART_KEY));
-    return Array.isArray(items) ? items : [];
+    return Array.isArray(items) ? items.filter(isValidItem) : [];
   } catch {
     return [];
   }
 }
 
-function writeCart(items) {
+function writeCart(items, { sync = true } = {}) {
   try {
     localStorage.setItem(CART_KEY, JSON.stringify(items));
   } catch {
@@ -20,6 +28,13 @@ function writeCart(items) {
   }
   cache = items;
   listeners.forEach((listener) => listener());
+
+  if (sync && serverToken) {
+    const token = serverToken;
+    syncQueue = syncQueue
+      .then(() => apiRequest('/api/cart', { method: 'PUT', body: { items }, token }))
+      .catch((err) => console.error('Gagal menyimpan keranjang:', err.message));
+  }
   return true;
 }
 
@@ -70,4 +85,33 @@ export function removeFromCart(variantIds) {
   if (removed.size > 0) {
     writeCart(getCart().filter((item) => !removed.has(item.variantId)));
   }
+}
+
+// Setelah masuk: isi localStorage digabung ke database, lalu database menjadi acuan.
+export async function connectCart(token) {
+  serverToken = token;
+  try {
+    const items = await apiRequest('/api/cart/merge', {
+      method: 'POST',
+      body: { items: getCart() },
+      token,
+    });
+    writeCart(items, { sync: false });
+  } catch (err) {
+    // Masalah keranjang tidak boleh menghalangi user masuk.
+    console.error('Gagal menggabungkan keranjang:', err.message);
+  }
+}
+
+// Saat halaman dibuka ulang dengan sesi aktif, keranjang diambil dari database.
+export async function restoreCart(token) {
+  const items = await apiRequest('/api/cart', { token });
+  serverToken = token;
+  writeCart(items, { sync: false });
+}
+
+// Keranjang milik akun tidak boleh tertinggal di browser setelah keluar.
+export function disconnectCart() {
+  serverToken = null;
+  writeCart([], { sync: false });
 }

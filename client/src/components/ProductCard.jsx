@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { formatRupiah } from '../lib/format.js';
 import { SEGMENT_LABELS } from '../lib/segments.js';
+import IllustrationTag from './IllustrationTag.jsx';
 
 export default function ProductCard({ product }) {
   const namaLengkap = `${product.merek} ${product.nama}`;
@@ -15,7 +16,7 @@ export default function ProductCard({ product }) {
             width="800"
             height="800"
             loading="lazy"
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            className="h-full w-full object-contain transition-transform group-hover:scale-105"
           />
           <div className="absolute left-2 top-2 flex flex-col items-start gap-1 text-xs font-semibold">
             {product.is_trending ? (
@@ -25,6 +26,7 @@ export default function ProductCard({ product }) {
               <span className="bg-neutral-950 px-2 py-1 text-white">Stok habis</span>
             )}
           </div>
+          {product.foto_ilustrasi ? <IllustrationTag /> : null}
         </div>
         <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-accent">
           {product.kategori} · {SEGMENT_LABELS[product.segmen]}
