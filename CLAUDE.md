@@ -1,6 +1,6 @@
 # RyzeSport
 
-Website toko online sepatu (running, sport, casual). Proyek portofolio, harus bisa dilihat publik.
+Website toko online multi-merek yang menjual sepatu running, sport, dan casual (Nike, adidas, Puma, dll). Proyek portofolio, harus bisa dilihat publik.
 
 Aplikasi terdiri dari 2 bagian:
 1. **Storefront (e-commerce)**: dikerjakan sekarang.
@@ -36,6 +36,7 @@ ryzesport/
 
 ## Aturan Bisnis (WAJIB diikuti)
 
+- Filter utama produk: Pria, Wanita, Anak, Trending. Kategori (running, sport, casual) menjadi filter kedua.
 - Pengunjung boleh melihat produk dan menambah ke keranjang **tanpa login** (keranjang disimpan di localStorage).
 - **Checkout WAJIB login/punya akun.** Saat tamu klik checkout, tampilkan notifikasi/modal untuk login atau daftar. Setelah login, keranjang localStorage digabung ke database.
 - Detail produk: user wajib memilih **warna** dan **ukuran** sebelum bisa add to cart / beli. Tombol nonaktif jika stok varian = 0.
@@ -57,7 +58,8 @@ Tabel inti:
 - `t_users`: email (unik), password_hash, nama, telepon
 - `t_addresses`: alamat milik user
 - `t_categories`: running, sport, casual
-- `t_products`: nama, slug, deskripsi, harga, category_id, is_active
+- `t_brands`: merek sepatu (nama, slug)
+- `t_products`: nama, slug, deskripsi, harga, category_id, brand_id, segmen (`PRIA`, `WANITA`, `ANAK`), is_trending, is_active
 - `t_product_colors`: warna per produk + URL foto per warna
 - `t_product_variants`: kombinasi warna × ukuran, stok, SKU
 - `t_carts`, `t_cart_items`: keranjang user yang sudah login
@@ -76,7 +78,10 @@ Checkout harus dalam **satu transaksi DB**: buat order, simpan item, kurangi sto
 - Gaya modern, bold, dan minimalis (inspirasi layout toko sepatu olahraga besar).
 - Dominan hitam-putih dengan satu warna aksen. Tipografi tebal untuk judul.
 - Mobile-first dan responsif.
-- **Jangan** memakai logo, nama brand, foto, atau teks milik brand lain (Nike, Adidas, dll). Semua produk memakai nama fiktif RyzeSport, contoh "Ryze Velocity 3".
+- Nama merek dan model asli boleh dipakai untuk menyebut produk, contoh "Nike Pegasus 41".
+- **Jangan** menyalin deskripsi atau foto dari situs resmi merek. Deskripsi ditulis sendiri, foto dari Unsplash/Pexels.
+- **Jangan** memakai logo merek sebagai hiasan atau memberi kesan mitra resmi.
+- Pemberitahuan "proyek portofolio, tidak ada penjualan atau pembayaran nyata" harus selalu terlihat di situs.
 
 ## Gaya Kode
 
@@ -89,7 +94,7 @@ Checkout harus dalam **satu transaksi DB**: buat order, simpan item, kurangi sto
 ## Progres
 
 - [x] Setup repo, Neon, migration + seed data
-- [ ] Beranda + daftar produk + filter kategori
+- [x] Beranda + daftar produk + filter kategori
 - [ ] Detail produk (warna, ukuran, stok)
 - [ ] Keranjang
 - [ ] Register / login
