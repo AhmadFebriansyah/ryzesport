@@ -37,6 +37,7 @@ ryzesport/
 ## Aturan Bisnis (WAJIB diikuti)
 
 - Filter utama produk: Pria, Wanita, Anak, Trending. Kategori (running, sport, casual) menjadi filter kedua.
+- Kartu katalog menampilkan foto warna terlaris. Warna dan ukuran dipilih di halaman detail.
 - Pengunjung boleh melihat produk dan menambah ke keranjang **tanpa login** (keranjang disimpan di localStorage).
 - **Checkout WAJIB login/punya akun.** Saat tamu klik checkout, tampilkan notifikasi/modal untuk login atau daftar. Setelah login, keranjang localStorage digabung ke database.
 - Detail produk: user wajib memilih **warna** dan **ukuran** sebelum bisa add to cart / beli. Tombol nonaktif jika stok varian = 0.
@@ -96,7 +97,7 @@ Checkout harus dalam **satu transaksi DB**: buat order, simpan item, kurangi sto
 - [x] Setup repo, Neon, migration + seed data
 - [x] Beranda + daftar produk + filter kategori
 - [x] Detail produk (warna, ukuran, stok)
-- [ ] Keranjang
+- [x] Keranjang (tamu, localStorage). Penggabungan ke database dikerjakan bersama login.
 - [ ] Register / login
 - [ ] Checkout (wajib login)
 - [ ] Pesanan Saya + riwayat status

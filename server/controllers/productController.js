@@ -4,6 +4,16 @@ const SLUG_PATTERN = /^[a-z0-9-]+$/;
 const MAX_LIMIT = 50;
 const SEGMEN = { pria: 'PRIA', wanita: 'WANITA', anak: 'ANAK' };
 
+// Warna terlaris dulu. Warna yang sama larisnya diacak dengan hash agar katalog tetap bervariasi
+// tetapi tidak berubah setiap halaman dimuat. Konstanta ini tanpa input user.
+const URUTAN_WARNA = `(
+    SELECT coalesce(sum(oi.qty), 0)
+    FROM t_order_items oi
+    JOIN t_orders o ON o.id = oi.order_id
+    JOIN t_product_variants sv ON sv.id = oi.variant_id
+    WHERE sv.color_id = pc.id AND o.status <> 'DIBATALKAN'
+  ) DESC, hashtextextended(pc.id::text, 0)`;
+
 export async function getProduct(req, res) {
   const { slug } = req.params;
 
@@ -47,7 +57,7 @@ export async function getProduct(req, res) {
      JOIN t_product_variants v ON v.color_id = pc.id
      WHERE pc.product_id = $1
      GROUP BY pc.id
-     ORDER BY pc.id`,
+     ORDER BY ${URUTAN_WARNA}`,
     [rows[0].id],
   );
 
@@ -102,7 +112,7 @@ export async function listProducts(req, res) {
      JOIN t_brands b ON b.id = p.brand_id
      CROSS JOIN LATERAL (
        SELECT
-         (array_agg(pc.foto_url ORDER BY pc.id))[1] AS foto_url,
+         (array_agg(pc.foto_url ORDER BY ${URUTAN_WARNA}))[1] AS foto_url,
          count(*)::int AS jumlah_warna,
          EXISTS (
            SELECT 1

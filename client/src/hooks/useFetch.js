@@ -9,10 +9,13 @@ async function fetchData(url, signal) {
   return body.data;
 }
 
+// URL null berarti tidak ada yang perlu diambil.
 export function useFetch(url) {
   const [result, setResult] = useState({ url: null, data: null, error: null });
 
   useEffect(() => {
+    if (!url) return undefined;
+
     const controller = new AbortController();
 
     fetchData(url, controller.signal)
@@ -31,6 +34,6 @@ export function useFetch(url) {
   return {
     data: isCurrent ? result.data : null,
     error: isCurrent ? result.error : null,
-    loading: !isCurrent,
+    loading: Boolean(url) && !isCurrent,
   };
 }
