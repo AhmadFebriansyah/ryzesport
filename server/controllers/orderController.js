@@ -1,0 +1,143 @@
+import { randomBytes } from 'node:crypto';
+import { withTransaction } from '../db/pool.js';
+
+const TELEPON_PATTERN = /^[0-9+\-\s]{8,20}$/;
+const KURIR = ['JNT', 'JNE'];
+const METODE_BAYAR = ['BCA', 'BRI', 'VIRTUAL_ACCOUNT'];
+
+class CheckoutError extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
+}
+
+const isText = (value, min, max) =>
+  typeof value === 'string' && value.trim().length >= min && value.trim().length <= max;
+
+function validateCheckout({ nama_penerima, telepon, alamat, kurir, metode_bayar }) {
+  if (!isText(nama_penerima, 2, 100)) return 'Nama penerima harus 2 sampai 100 karakter.';
+  if (typeof telepon !== 'string' || !TELEPON_PATTERN.test(telepon)) {
+    return 'Format nomor telepon tidak valid.';
+  }
+  if (!isText(alamat, 10, 500)) return 'Alamat lengkap harus 10 sampai 500 karakter.';
+  if (!KURIR.includes(kurir)) return 'Pilih kurir yang tersedia.';
+  if (!METODE_BAYAR.includes(metode_bayar)) return 'Pilih metode pembayaran yang tersedia.';
+  return null;
+}
+
+function generateNoOrder() {
+  const tanggal = new Date().toISOString().slice(0, 10).replaceAll('-', '');
+  return `RS-${tanggal}-${randomBytes(4).toString('hex').toUpperCase()}`;
+}
+
+async function placeOrder(client, userId, form) {
+  // Mengunci keranjang mencegah klik ganda membuat dua pesanan.
+  const { rows: carts } = await client.query(
+    'SELECT id FROM t_carts WHERE user_id = $1 FOR UPDATE',
+    [userId],
+  );
+  if (carts.length === 0) {
+    throw new CheckoutError(400, 'Keranjangmu masih kosong.');
+  }
+  const cartId = carts[0].id;
+
+  // Varian dikunci berurutan id agar dua checkout bersamaan tidak saling menunggu (deadlock).
+  const { rows: items } = await client.query(
+    `SELECT
+       v.id AS variant_id,
+       v.ukuran::float AS ukuran,
+       v.stok,
+       ci.qty,
+       p.harga,
+       p.is_active,
+       b.nama || ' ' || p.nama AS nama
+     FROM t_cart_items ci
+     JOIN t_product_variants v ON v.id = ci.variant_id
+     JOIN t_product_colors pc ON pc.id = v.color_id
+     JOIN t_products p ON p.id = pc.product_id
+     JOIN t_brands b ON b.id = p.brand_id
+     WHERE ci.cart_id = $1
+     ORDER BY v.id
+     FOR UPDATE OF v`,
+    [cartId],
+  );
+  if (items.length === 0) {
+    throw new CheckoutError(400, 'Keranjangmu masih kosong.');
+  }
+
+  const kurang = items.find((item) => !item.is_active || item.stok < item.qty);
+  if (kurang) {
+    throw new CheckoutError(
+      409,
+      `Stok ${kurang.nama} ukuran ${kurang.ukuran} tidak cukup. Tersisa ${kurang.is_active ? kurang.stok : 0}.`,
+    );
+  }
+
+  const total = items.reduce((sum, item) => sum + item.harga * item.qty, 0);
+  const noOrder = generateNoOrder();
+  const ids = items.map((item) => item.variant_id);
+  const qtys = items.map((item) => item.qty);
+
+  const { rows: orders } = await client.query(
+    `INSERT INTO t_orders (
+       no_order, user_id, nama_penerima, telepon_penerima, alamat_penerima, kurir, metode_bayar, total
+     )
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+     RETURNING id`,
+    [
+      noOrder,
+      userId,
+      form.nama_penerima.trim(),
+      form.telepon.trim(),
+      form.alamat.trim(),
+      form.kurir,
+      form.metode_bayar,
+      total,
+    ],
+  );
+  const orderId = orders[0].id;
+
+  await client.query(
+    `INSERT INTO t_order_items (order_id, variant_id, qty, harga_saat_beli)
+     SELECT $1, i.variant_id, i.qty, i.harga
+     FROM unnest($2::bigint[], $3::int[], $4::int[]) AS i (variant_id, qty, harga)`,
+    [orderId, ids, qtys, items.map((item) => item.harga)],
+  );
+
+  await client.query(
+    `UPDATE t_product_variants v
+     SET stok = v.stok - i.qty
+     FROM unnest($1::bigint[], $2::int[]) AS i (variant_id, qty)
+     WHERE v.id = i.variant_id`,
+    [ids, qtys],
+  );
+
+  await client.query(
+    `INSERT INTO t_order_status_history (order_id, status, catatan)
+     VALUES ($1, 'MENUNGGU_PEMBAYARAN', 'Pesanan dibuat')`,
+    [orderId],
+  );
+
+  await client.query('DELETE FROM t_cart_items WHERE cart_id = $1', [cartId]);
+
+  return { no_order: noOrder, total };
+}
+
+export async function createOrder(req, res) {
+  const form = req.body ?? {};
+  const message = validateCheckout(form);
+  if (message) {
+    return res.status(400).json({ message });
+  }
+
+  try {
+    const order = await withTransaction((client) => placeOrder(client, req.userId, form));
+    return res.status(201).json({ data: order });
+  } catch (err) {
+    if (err instanceof CheckoutError) {
+      return res.status(err.status).json({ message: err.message });
+    }
+    throw err;
+  }
+}

@@ -16,7 +16,7 @@ export default function ProductCard({ product }) {
             width="800"
             height="800"
             loading="lazy"
-            className="h-full w-full object-contain transition-transform group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform group-hover:scale-105"
           />
           <div className="absolute left-2 top-2 flex flex-col items-start gap-1 text-xs font-semibold">
             {product.is_trending ? (

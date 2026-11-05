@@ -3,7 +3,7 @@
 -- Deskripsi ditulis sendiri, bukan salinan dari situs merek.
 -- Aman dijalankan ulang: data yang sudah ada tidak ditimpa, jadi stok dan harga hasil
 -- perubahan aplikasi tetap utuh.
--- Foto dari Wikimedia Commons, disimpan di client/public/produk. Kredit tampil di /kredit-foto.
+-- Foto dari Wikimedia Commons dan Pexels, disimpan di client/public/produk. Kredit tampil di /kredit-foto.
 
 INSERT INTO t_categories (nama, slug) VALUES
   ('Running', 'running'),
@@ -60,32 +60,32 @@ JOIN t_brands b ON b.slug = p.brand_slug
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO t_product_colors (
-  product_id, nama_warna, foto_url, foto_ilustrasi, foto_kredit, foto_lisensi, foto_sumber_url
+  product_id, nama_warna, foto_url, foto_ilustrasi, foto_kredit, foto_lisensi, foto_sumber_url, foto_kredit_url
 )
-SELECT p.id, w.nama_warna, w.foto_url, w.foto_ilustrasi, w.foto_kredit, w.foto_lisensi, w.foto_sumber_url
+SELECT p.id, w.nama_warna, w.foto_url, w.foto_ilustrasi, w.foto_kredit, w.foto_lisensi, w.foto_sumber_url, w.foto_kredit_url
 FROM (VALUES
-  ('nike-pegasus-41-pria', 'Putih', '/produk/pegasus-1.jpg', true, 'Ssu', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Nike_Zoom_Pegasus_38_running_shoe.jpg'),
-  ('nike-pegasus-41-wanita', 'Putih', '/produk/pegasus-1.jpg', true, 'Ssu', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Nike_Zoom_Pegasus_38_running_shoe.jpg'),
-  ('nike-pegasus-42-anak', 'Putih', '/produk/pegasus-1.jpg', true, 'Ssu', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Nike_Zoom_Pegasus_38_running_shoe.jpg'),
-  ('nike-star-runner-5-anak', 'Hitam', '/produk/pegasus-0.jpg', true, 'GautamSudhanshu', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Nike_Running_Shoes.jpg'),
-  ('asics-gel-nimbus-27-pria', 'Biru Navy', '/produk/nimbus-8.jpg', true, 'Petar Milošević', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Asics_Gel-Cumulus_22.jpg'),
-  ('asics-gel-nimbus-27-pria', 'Putih', '/produk/nimbus-11.jpg', true, 'LeDroider', 'CC0', 'https://commons.wikimedia.org/wiki/File:Asics_GT-2160.jpg'),
-  ('adidas-ultraboost-5-pria', 'Hitam', '/produk/ultraboost-3.jpg', true, 'Dough4872', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Adidas_Ultra_Boost_4_running_shoes.jpeg'),
-  ('adidas-ultraboost-5-pria', 'Merah', '/produk/ultraboost-5.jpg', true, 'Wet Af', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Adidas_Ultra_Boost_2015_model_.jpg'),
-  ('nike-metcon-10-pria', 'Abu-abu', '/produk/metcon-0.jpg', true, 'ajay_suresh', 'CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Gym_Shoes_-_Nike_Metcon_(51080442242).jpg'),
-  ('nike-metcon-10-wanita', 'Abu-abu', '/produk/metcon-0.jpg', true, 'ajay_suresh', 'CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Gym_Shoes_-_Nike_Metcon_(51080442242).jpg'),
-  ('adidas-predator-league-indoor-pria', 'Hitam Biru', '/produk/predator-10.jpg', true, 'Pangalau', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Adidas_Predator_AdiPower_Firm_Ground_(Robin_van_Persie)_01.jpg'),
-  ('adidas-samba-og-pria', 'Hitam', '/produk/samba-9.jpg', false, 'Pangalau', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Adidas_Samba.jpg'),
-  ('adidas-samba-og-pria', 'Putih', '/produk/samba-10.jpg', false, 'LeDroider', 'CC0', 'https://commons.wikimedia.org/wiki/File:Adidas_Samba_OG.jpg'),
-  ('adidas-samba-og-wanita', 'Hitam', '/produk/samba-7.jpg', false, 'Ksharks2', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Adidas_Samba_original_sneaker_March-_2024.jpg'),
-  ('adidas-samba-og-wanita', 'Putih', '/produk/samba-8.jpg', false, 'Ksharks2', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Adidas_Samba_In_White_March_2024.jpg'),
-  ('new-balance-550-pria', 'Putih Marun', '/produk/nb550-10.jpg', false, 'LeDroider', 'CC0', 'https://commons.wikimedia.org/wiki/File:New_Balance_550.jpg'),
-  ('puma-suede-classic-xxi-pria', 'Hitam', '/produk/suede-3.jpg', false, 'LeDroider', 'CC0', 'https://commons.wikimedia.org/wiki/File:Puma_Suede.jpg'),
-  ('puma-suede-classic-xxi-pria', 'Merah', '/produk/suede-2.jpg', false, 'DavidIvar', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Puma_suede_red.jpg'),
-  ('puma-suede-classic-wanita', 'Merah', '/produk/suede-1.jpg', false, 'Vincent van der Heijden', 'CC BY 2.0', 'https://commons.wikimedia.org/wiki/File:Puma_shoes.jpg'),
-  ('nike-air-force-1-07-wanita', 'Putih', '/produk/af1-0.jpg', false, 'Juicyfroot', 'CC BY-SA 3.0', 'https://commons.wikimedia.org/wiki/File:NikeAirForceOne07.jpg'),
-  ('nike-air-force-1-anak', 'Putih', '/produk/af1-10.jpg', false, 'Fallout86453', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Nike_Air_Force_1%27s.jpg')
-) AS w (product_slug, nama_warna, foto_url, foto_ilustrasi, foto_kredit, foto_lisensi, foto_sumber_url)
+  ('nike-pegasus-41-pria', 'Abu-abu Merah', 'https://images.unsplash.com/photo-1739138053507-0f312a938451?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8Mnx8bmlrZSUyMHBlZ2FzdXN8ZW58MXx8fHwxNzkzODUzMjc2fDA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', true, 'Zoshua Colah', 'Unsplash License', 'https://unsplash.com/photos/a-pair-of-sneakers-on-a-metal-stand-BRoqOFOrSuE?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@zoshuacolah?utm_source=ryzesport&utm_medium=referral'),
+  ('nike-pegasus-41-wanita', 'Putih', 'https://images.unsplash.com/photo-1634316427425-722247ebe036?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8MXx8bmlrZSUyMGtpZHMlMjBzaG9lc3xlbnwxfHx8fDE3OTM4NTMyNzd8MA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', true, 'David Chavez', 'Unsplash License', 'https://unsplash.com/photos/a-pair-of-white-and-black-shoes-on-a-white-surface-1Us_GlM9j-M?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@designsdavidc?utm_source=ryzesport&utm_medium=referral'),
+  ('nike-pegasus-42-anak', 'Putih', 'https://images.unsplash.com/photo-1634316427425-722247ebe036?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8MXx8bmlrZSUyMGtpZHMlMjBzaG9lc3xlbnwxfHx8fDE3OTM4NTMyNzd8MA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', true, 'David Chavez', 'Unsplash License', 'https://unsplash.com/photos/a-pair-of-white-and-black-shoes-on-a-white-surface-1Us_GlM9j-M?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@designsdavidc?utm_source=ryzesport&utm_medium=referral'),
+  ('nike-star-runner-5-anak', 'Hitam', 'https://images.unsplash.com/photo-1611080027147-a1a0b6e05168?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8MTB8fG5pa2UlMjBtZXRjb258ZW58MXx8fHwxNzkzODUzMjc3fDA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', true, 'Miquel Parera', 'Unsplash License', 'https://unsplash.com/photos/black-and-white-nike-athletic-shoes-on-brown-sand-xag0YpBqNfQ?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@miquel_parera_mila?utm_source=ryzesport&utm_medium=referral'),
+  ('asics-gel-nimbus-27-pria', 'Biru Navy', 'https://images.unsplash.com/photo-1644001992668-3b9ed080533a?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8M3x8YXNpY3MlMjBnZWwlMjBuaW1idXN8ZW58MXx8fHwxNzkzODUzMjgxfDA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', true, 'Gabre Cameron', 'Unsplash License', 'https://unsplash.com/photos/a-black-and-blue-shoe-with-orange-accents-Ux9KIBNO-rQ?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@gabrecameron?utm_source=ryzesport&utm_medium=referral'),
+  ('asics-gel-nimbus-27-pria', 'Hijau', '/produk/px-8858120.jpg', true, 'Pexels', 'Pexels License', 'https://www.pexels.com/photo/green-and-blue-asics-running-shoes-8858120/', NULL),
+  ('adidas-ultraboost-5-pria', 'Hitam', 'https://images.unsplash.com/photo-1547974009-6fb0db54c905?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8M3x8YWRpZGFzJTIwdWx0cmFib29zdHxlbnwxfHx8fDE3OTM4NTMyNzl8MA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', true, 'Peng Originals', 'Unsplash License', 'https://unsplash.com/photos/black-adidas-ultra-boost-shoe-on-box-46t8J6BxKM0?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@ulsumaaron?utm_source=ryzesport&utm_medium=referral'),
+  ('adidas-ultraboost-5-pria', 'Merah', 'https://images.unsplash.com/photo-1580902394724-b08ff9ba7e8a?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8Mnx8YWRpZGFzJTIwdWx0cmFib29zdHxlbnwxfHx8fDE3OTM4NTMyNzl8MA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', true, 'Grailify', 'Unsplash License', 'https://unsplash.com/photos/red-and-blue-nike-athletic-shoe-ju4-jsQ8jmk?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@grailify?utm_source=ryzesport&utm_medium=referral'),
+  ('nike-metcon-10-pria', 'Abu-abu', 'https://images.unsplash.com/photo-1740218142297-9088613fb3f7?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8NXx8bmlrZSUyMG1ldGNvbnxlbnwxfHx8fDE3OTM4NTMyNzd8MA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', true, 'Christopher Kirk Dulalia', 'Unsplash License', 'https://unsplash.com/photos/a-close-up-of-a-shoe-on-the-ground-T1p0Jau1xDc?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@kirkdulalia?utm_source=ryzesport&utm_medium=referral'),
+  ('nike-metcon-10-wanita', 'Hitam', 'https://images.unsplash.com/photo-1605408499391-6368c628ef42?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8MXx8bmlrZSUyMG1ldGNvbnxlbnwxfHx8fDE3OTM4NTMyNzd8MA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', true, 'USAMA AKRAM', 'Unsplash License', 'https://unsplash.com/photos/black-and-white-nike-athletic-shoe-g3CMh2nqj_w?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@usama_1248?utm_source=ryzesport&utm_medium=referral'),
+  ('adidas-predator-league-indoor-pria', 'Biru Merah', 'https://images.unsplash.com/photo-1612387605830-d452ad0ab7c2?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8NXx8YWRpZGFzJTIwcHJlZGF0b3J8ZW58MXx8fHwxNzkzODUzMjc4fDA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', true, 'Braden Hopkins', 'Unsplash License', 'https://unsplash.com/photos/red-and-black-nike-athletic-shoes-s6y5jURGxkU?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@bradenh13?utm_source=ryzesport&utm_medium=referral'),
+  ('adidas-samba-og-pria', 'Hitam', '/produk/samba-9.jpg', false, 'Pangalau', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Adidas_Samba.jpg', NULL),
+  ('adidas-samba-og-pria', 'Putih', 'https://images.unsplash.com/photo-1718220130188-428c7dc27fd2?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8MXx8YWRpZGFzJTIwc2FtYmF8ZW58MXx8fHwxNzkzODUzMjc4fDA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', false, 'Cris', 'Unsplash License', 'https://unsplash.com/photos/a-pair-of-white-and-black-shoes-on-a-wooden-floor-kpnkWLoM3cE?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@cris_23?utm_source=ryzesport&utm_medium=referral'),
+  ('adidas-samba-og-wanita', 'Hitam', '/produk/samba-7.jpg', false, 'Ksharks2', 'CC BY-SA 4.0', 'https://commons.wikimedia.org/wiki/File:Adidas_Samba_original_sneaker_March-_2024.jpg', NULL),
+  ('adidas-samba-og-wanita', 'Putih', 'https://images.unsplash.com/photo-1695552836001-e34239c9c9d4?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8M3x8YWRpZGFzJTIwc2FtYmF8ZW58MXx8fHwxNzkzODUzMjc4fDA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', false, 'SJ', 'Unsplash License', 'https://unsplash.com/photos/a-pair-of-white-and-green-adidas-sneakers-j86izBICXHY?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@uxsj_ph?utm_source=ryzesport&utm_medium=referral'),
+  ('new-balance-550-pria', 'Putih Marun', '/produk/nb550-10.jpg', false, 'LeDroider', 'CC0', 'https://commons.wikimedia.org/wiki/File:New_Balance_550.jpg', NULL),
+  ('puma-suede-classic-xxi-pria', 'Hitam', '/produk/suede-3.jpg', false, 'LeDroider', 'CC0', 'https://commons.wikimedia.org/wiki/File:Puma_Suede.jpg', NULL),
+  ('puma-suede-classic-xxi-pria', 'Merah', 'https://images.unsplash.com/photo-1626298051747-1ba4ff5cd5a1?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8N3x8cHVtYSUyMHN1ZWRlfGVufDF8fHx8MTc5Mzg1MzI4MHww&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', false, 'Maria Fernanda Pissioli', 'Unsplash License', 'https://unsplash.com/photos/red-and-white-nike-athletic-shoes-on-black-metal-bar-0SxStKdQ-iM?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@mxpissioli?utm_source=ryzesport&utm_medium=referral'),
+  ('puma-suede-classic-wanita', 'Merah', 'https://images.unsplash.com/photo-1626298038175-e9f383124e1f?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8OHx8cHVtYSUyMHN1ZWRlfGVufDF8fHx8MTc5Mzg1MzI4MHww&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', false, 'Maria Fernanda Pissioli', 'Unsplash License', 'https://unsplash.com/photos/red-and-white-nike-athletic-shoes-VOpBKo48lq0?utm_source=ryzesport&utm_medium=referral', 'https://unsplash.com/@mxpissioli?utm_source=ryzesport&utm_medium=referral'),
+  ('nike-air-force-1-07-wanita', 'Putih', '/produk/px-12611637.jpg', false, 'Pexels', 'Pexels License', 'https://www.pexels.com/photo/a-close-up-shot-of-a-nike-air-force-1-12611637/', NULL),
+  ('nike-air-force-1-anak', 'Putih', '/produk/px-12611630.jpg', false, 'HamZa NOUASRIA', 'Pexels License', 'https://www.pexels.com/photo/a-white-nike-shoe-12611630/', NULL)
+) AS w (product_slug, nama_warna, foto_url, foto_ilustrasi, foto_kredit, foto_lisensi, foto_sumber_url, foto_kredit_url)
 JOIN t_products p ON p.slug = w.product_slug
 ON CONFLICT (product_id, nama_warna) DO NOTHING;
 

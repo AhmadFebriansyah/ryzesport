@@ -5,6 +5,7 @@ import authRouter from './routes/auth.js';
 import cartRouter from './routes/cart.js';
 import categoriesRouter from './routes/categories.js';
 import healthRouter from './routes/health.js';
+import ordersRouter from './routes/orders.js';
 import productsRouter from './routes/products.js';
 import variantsRouter from './routes/variants.js';
 
@@ -18,11 +19,17 @@ app.use('/api/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/categories', categoriesRouter);
+app.use('/api/orders', ordersRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/variants', variantsRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(port, () => {
+// Express 5 mengirim kegagalan listen (misalnya port terpakai) ke callback ini.
+app.listen(port, (err) => {
+  if (err) {
+    console.error(`API gagal berjalan di port ${port}:`, err.message);
+    process.exit(1);
+  }
   console.log(`API berjalan di http://localhost:${port}`);
 });

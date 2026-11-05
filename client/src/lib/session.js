@@ -32,6 +32,10 @@ export function getSession() {
   return session;
 }
 
+export function getToken() {
+  return readToken();
+}
+
 export function subscribeSession(listener) {
   listeners.add(listener);
   return () => listeners.delete(listener);

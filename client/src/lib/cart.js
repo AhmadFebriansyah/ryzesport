@@ -87,6 +87,16 @@ export function removeFromCart(variantIds) {
   }
 }
 
+// Menunggu perubahan terakhir sampai ke server sebelum checkout membaca keranjang di database.
+export function flushCart() {
+  return syncQueue;
+}
+
+// Dipakai setelah checkout berhasil. Server sudah mengosongkan keranjangnya sendiri.
+export function clearCart() {
+  writeCart([], { sync: false });
+}
+
 // Setelah masuk: isi localStorage digabung ke database, lalu database menjadi acuan.
 export async function connectCart(token) {
   serverToken = token;

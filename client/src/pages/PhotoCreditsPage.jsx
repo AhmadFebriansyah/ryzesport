@@ -7,8 +7,20 @@ export default function PhotoCreditsPage() {
     <div className="mx-auto max-w-3xl px-4 py-8 md:px-8 md:py-12">
       <h1 className="font-display text-4xl font-black uppercase tracking-tight">Kredit Foto</h1>
       <p className="mt-4 text-neutral-600">
-        Foto produk berasal dari Wikimedia Commons dan dipakai sesuai lisensinya, dengan ukuran yang
-        diperkecil. Foto berlabel ilustrasi menunjukkan seri atau model yang berbeda dari produk.
+        Foto produk berasal dari Unsplash, Pexels, dan Wikimedia Commons, dipakai sesuai lisensinya.
+        Foto berlabel ilustrasi menunjukkan seri atau model yang berbeda dari produk.
+      </p>
+      <p className="mt-4 text-neutral-600">
+        Model 3D:{' '}
+        <a
+          href="https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/MaterialsVariantsShoe"
+          target="_blank"
+          rel="noreferrer"
+          className="underline hover:text-accent"
+        >
+          Materials Variants Shoe
+        </a>{' '}
+        oleh Shopify, CC BY 4.0. Tekstur diperkecil agar lebih ringan.
       </p>
 
       {loading ? (
@@ -28,7 +40,18 @@ export default function PhotoCreditsPage() {
                 className="h-16 w-16 shrink-0 bg-neutral-100 object-cover"
               />
               <p className="min-w-0 text-sm">
-                <span className="font-semibold">{credit.foto_kredit}</span>
+                {credit.foto_kredit_url ? (
+                  <a
+                    href={credit.foto_kredit_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-semibold underline hover:text-accent"
+                  >
+                    {credit.foto_kredit}
+                  </a>
+                ) : (
+                  <span className="font-semibold">{credit.foto_kredit}</span>
+                )}
                 <br />
                 <span className="text-neutral-500">{credit.foto_lisensi}</span> ·{' '}
                 <a href={credit.foto_sumber_url} target="_blank" rel="noreferrer" className="underline hover:text-accent">

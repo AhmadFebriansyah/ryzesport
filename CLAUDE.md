@@ -12,7 +12,7 @@ Aplikasi terdiri dari 2 bagian:
 - **Backend:** Node.js + Express (REST API)
 - **Database:** PostgreSQL di Neon (driver `pg`)
 - **Auth:** JWT + bcrypt untuk hash password
-- **Gambar produk:** `client/public/produk` (foto berlisensi bebas dari Wikimedia Commons). Pindah ke Cloudinary jika kredensial tersedia.
+- **Gambar produk:** foto Unsplash ditampilkan langsung dari `images.unsplash.com` (wajib menurut panduan API-nya, jangan disalin ke proyek). Foto Pexels dan Wikimedia Commons ada di `client/public/produk`. `UNSPLASH_ACCESS_KEY` di `server/.env` hanya untuk mencari foto.
 - **Deploy:** Vercel
 
 ## Struktur Folder
@@ -61,7 +61,7 @@ Tabel inti:
 - `t_categories`: running, sport, casual
 - `t_brands`: merek sepatu (nama, slug)
 - `t_products`: nama, slug, deskripsi, harga, category_id, brand_id, segmen (`PRIA`, `WANITA`, `ANAK`), is_trending, is_active
-- `t_product_colors`: warna per produk, URL foto, penanda foto ilustrasi, kredit, lisensi, dan sumber foto
+- `t_product_colors`: warna per produk, URL foto, penanda foto ilustrasi, kredit dan tautannya, lisensi, dan sumber foto
 - `t_product_variants`: kombinasi warna × ukuran, stok, SKU
 - `t_carts`, `t_cart_items`: keranjang user yang sudah login
 - `t_orders`: no_order, user_id (**NOT NULL**), data penerima, kurir, metode_bayar, no_resi, total, status
@@ -82,6 +82,7 @@ Checkout harus dalam **satu transaksi DB**: buat order, simpan item, kurangi sto
 - Nama merek dan model asli boleh dipakai untuk menyebut produk, contoh "Nike Pegasus 41".
 - **Jangan** menyalin deskripsi atau foto dari situs resmi merek. Deskripsi ditulis sendiri, foto harus berlisensi bebas dan kreditnya tampil di `/kredit-foto`.
 - Nama warna harus sama dengan foto. Foto seri atau model lain wajib berlabel "Foto ilustrasi".
+- Klik foto di halaman detail membuka model 3D yang bisa diputar 360°. Model ini contoh umum untuk semua produk, jadi wajib ada keterangan bahwa bentuknya bukan produk asli.
 - **Jangan** memakai logo merek sebagai hiasan atau memberi kesan mitra resmi.
 - Pemberitahuan "proyek portofolio, tidak ada penjualan atau pembayaran nyata" harus selalu terlihat di situs.
 
@@ -100,6 +101,6 @@ Checkout harus dalam **satu transaksi DB**: buat order, simpan item, kurangi sto
 - [x] Detail produk (warna, ukuran, stok)
 - [x] Keranjang (tamu, localStorage). Penggabungan ke database dikerjakan bersama login.
 - [x] Register / login
-- [ ] Checkout (wajib login)
+- [x] Checkout (wajib login)
 - [ ] Pesanan Saya + riwayat status
 - [ ] (Nanti) Aplikasi Admin

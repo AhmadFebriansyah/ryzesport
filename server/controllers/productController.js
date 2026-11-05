@@ -16,7 +16,7 @@ const URUTAN_WARNA = `(
 
 export async function listPhotoCredits(_req, res) {
   const { rows } = await query(
-    `SELECT DISTINCT ON (foto_url) foto_url, foto_kredit, foto_lisensi, foto_sumber_url
+    `SELECT DISTINCT ON (foto_url) foto_url, foto_kredit, foto_kredit_url, foto_lisensi, foto_sumber_url
      FROM t_product_colors
      ORDER BY foto_url`,
   );
