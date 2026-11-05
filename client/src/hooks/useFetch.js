@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
-async function fetchData(url, signal) {
-  const response = await fetch(url, { signal });
+async function fetchData(url, signal, token) {
+  const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+  const response = await fetch(url, { signal, headers });
   const body = await response.json().catch(() => null);
   if (!response.ok) {
     throw new Error(body?.message ?? 'Gagal memuat data. Coba lagi nanti.');
@@ -10,7 +11,7 @@ async function fetchData(url, signal) {
 }
 
 // URL null berarti tidak ada yang perlu diambil.
-export function useFetch(url) {
+export function useFetch(url, token) {
   const [result, setResult] = useState({ url: null, data: null, error: null });
 
   useEffect(() => {
@@ -18,7 +19,7 @@ export function useFetch(url) {
 
     const controller = new AbortController();
 
-    fetchData(url, controller.signal)
+    fetchData(url, controller.signal, token)
       .then((data) => setResult({ url, data, error: null }))
       .catch((err) => {
         if (err.name !== 'AbortError') {
@@ -27,7 +28,7 @@ export function useFetch(url) {
       });
 
     return () => controller.abort();
-  }, [url]);
+  }, [url, token]);
 
   // Hasil milik URL lama dianggap belum ada, supaya data lama tidak tampil saat filter berganti.
   const isCurrent = result.url === url;

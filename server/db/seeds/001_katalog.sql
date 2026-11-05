@@ -59,6 +59,15 @@ JOIN t_categories c ON c.slug = p.category_slug
 JOIN t_brands b ON b.slug = p.brand_slug
 ON CONFLICT (slug) DO NOTHING;
 
+UPDATE t_products
+SET is_unggulan = true
+WHERE slug IN (
+  'nike-air-force-1-07-wanita',
+  'adidas-samba-og-pria',
+  'puma-suede-classic-xxi-pria',
+  'new-balance-550-pria'
+);
+
 INSERT INTO t_product_colors (
   product_id, nama_warna, foto_url, foto_ilustrasi, foto_kredit, foto_lisensi, foto_sumber_url, foto_kredit_url
 )
@@ -112,3 +121,23 @@ FROM (
   CROSS JOIN LATERAL unnest(s.ukuran_list) AS u (ukuran)
 ) v
 ON CONFLICT DO NOTHING;
+
+INSERT INTO t_product_photos (
+  color_id, foto_url, foto_kredit, foto_kredit_url, foto_lisensi, foto_sumber_url, urutan
+)
+SELECT c.id, w.foto_url, w.foto_kredit, w.foto_kredit_url, w.foto_lisensi, w.foto_sumber_url, w.urutan
+FROM (VALUES
+  ('adidas-samba-og-pria', 'Putih', 'https://images.unsplash.com/photo-1718220095476-7916e897fc55?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8Mnx8YWRpZGFzJTIwc2FtYmF8ZW58MXx8fHwxNzkzODUzMjc4fDA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', 'Cris', 'https://unsplash.com/@cris_23?utm_source=ryzesport&utm_medium=referral', 'Unsplash License', 'https://unsplash.com/photos/a-white-and-black-adidas-sneakers-on-a-wooden-floor-fIflxqqzBQY?utm_source=ryzesport&utm_medium=referral', 1),
+  ('adidas-samba-og-wanita', 'Putih', 'https://images.unsplash.com/photo-1695552835881-fdcf4bf18aa6?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8OXx8YWRpZGFzJTIwc2FtYmF8ZW58MXx8fHwxNzkzODUzMjc4fDA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', 'SJ', 'https://unsplash.com/@uxsj_ph?utm_source=ryzesport&utm_medium=referral', 'Unsplash License', 'https://unsplash.com/photos/a-pair-of-white-and-green-sneakers-on-a-table-ehtZZGly45M?utm_source=ryzesport&utm_medium=referral', 1),
+  ('adidas-samba-og-wanita', 'Putih', 'https://images.unsplash.com/photo-1695552836616-37fd42c5d8e9?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8N3x8YWRpZGFzJTIwc2FtYmF8ZW58MXx8fHwxNzkzODUzMjc4fDA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', 'SJ', 'https://unsplash.com/@uxsj_ph?utm_source=ryzesport&utm_medium=referral', 'Unsplash License', 'https://unsplash.com/photos/a-pair-of-white-and-green-adidas-sneakers-FMnyPrg1KYY?utm_source=ryzesport&utm_medium=referral', 2),
+  ('adidas-samba-og-wanita', 'Putih', 'https://images.unsplash.com/photo-1695552835054-95b185af3d11?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8NHx8YWRpZGFzJTIwc2FtYmF8ZW58MXx8fHwxNzkzODUzMjc4fDA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', 'SJ', 'https://unsplash.com/@uxsj_ph?utm_source=ryzesport&utm_medium=referral', 'Unsplash License', 'https://unsplash.com/photos/a-pair-of-white-and-green-adidas-sneakers-Y5pcyypfuLE?utm_source=ryzesport&utm_medium=referral', 3),
+  ('adidas-ultraboost-5-pria', 'Merah', 'https://images.unsplash.com/photo-1580902394836-21e0d429b7f4?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8OHx8YWRpZGFzJTIwdWx0cmFib29zdHxlbnwxfHx8fDE3OTM4NTMyNzl8MA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', 'Grailify', 'https://unsplash.com/@grailify?utm_source=ryzesport&utm_medium=referral', 'Unsplash License', 'https://unsplash.com/photos/red-and-blue-nike-athletic-shoe-H60PIPeH8IQ?utm_source=ryzesport&utm_medium=referral', 1),
+  ('adidas-ultraboost-5-pria', 'Merah', 'https://images.unsplash.com/photo-1580902394743-1394a7ec93d2?ixid=M3wxMTI0MDAwfDB8MXxhbGx8OHx8fHx8fDF8fDE3OTM4NTczOTV8&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', 'Grailify', 'https://unsplash.com/@grailify?utm_source=ryzesport&utm_medium=referral', 'Unsplash License', 'https://unsplash.com/photos/red-and-blue-nike-athletic-shoe-KNnPrMY0B6k?utm_source=ryzesport&utm_medium=referral', 2),
+  ('nike-pegasus-41-wanita', 'Putih', 'https://images.unsplash.com/photo-1634316427452-3eac60a2803d?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8NHx8bmlrZSUyMGtpZHMlMjBzaG9lc3xlbnwxfHx8fDE3OTM4NTMyNzd8MA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', 'David Chavez', 'https://unsplash.com/@designsdavidc?utm_source=ryzesport&utm_medium=referral', 'Unsplash License', 'https://unsplash.com/photos/a-white-and-black-nike-shoe-on-a-white-surface--GT7jvdO9-s?utm_source=ryzesport&utm_medium=referral', 1),
+  ('nike-pegasus-42-anak', 'Putih', 'https://images.unsplash.com/photo-1634316427452-3eac60a2803d?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8NHx8bmlrZSUyMGtpZHMlMjBzaG9lc3xlbnwxfHx8fDE3OTM4NTMyNzd8MA&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', 'David Chavez', 'https://unsplash.com/@designsdavidc?utm_source=ryzesport&utm_medium=referral', 'Unsplash License', 'https://unsplash.com/photos/a-white-and-black-nike-shoe-on-a-white-surface--GT7jvdO9-s?utm_source=ryzesport&utm_medium=referral', 1),
+  ('puma-suede-classic-xxi-pria', 'Merah', 'https://images.unsplash.com/photo-1626298038175-e9f383124e1f?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8OHx8cHVtYSUyMHN1ZWRlfGVufDF8fHx8MTc5Mzg1MzI4MHww&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', 'Maria Fernanda Pissioli', 'https://unsplash.com/@mxpissioli?utm_source=ryzesport&utm_medium=referral', 'Unsplash License', 'https://unsplash.com/photos/red-and-white-nike-athletic-shoes-VOpBKo48lq0?utm_source=ryzesport&utm_medium=referral', 1),
+  ('puma-suede-classic-wanita', 'Merah', 'https://images.unsplash.com/photo-1626298051747-1ba4ff5cd5a1?ixid=M3wxMTI0MDAwfDB8MXxzZWFyY2h8N3x8cHVtYSUyMHN1ZWRlfGVufDF8fHx8MTc5Mzg1MzI4MHww&ixlib=rb-4.1.0&auto=format&fit=max&w=900&q=80', 'Maria Fernanda Pissioli', 'https://unsplash.com/@mxpissioli?utm_source=ryzesport&utm_medium=referral', 'Unsplash License', 'https://unsplash.com/photos/red-and-white-nike-athletic-shoes-on-black-metal-bar-0SxStKdQ-iM?utm_source=ryzesport&utm_medium=referral', 1)
+) AS w (product_slug, nama_warna, foto_url, foto_kredit, foto_kredit_url, foto_lisensi, foto_sumber_url, urutan)
+JOIN t_products p ON p.slug = w.product_slug
+JOIN t_product_colors c ON c.product_id = p.id AND c.nama_warna = w.nama_warna
+ON CONFLICT (color_id, foto_url) DO NOTHING;

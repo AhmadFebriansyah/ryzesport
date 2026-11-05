@@ -1,23 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import ChoiceField from '../components/ChoiceField.jsx';
+import PaymentField from '../components/PaymentField.jsx';
 import TextField from '../components/TextField.jsx';
 import { useCartItems } from '../hooks/useCartItems.js';
 import { useSession } from '../hooks/useSession.js';
 import { apiRequest } from '../lib/api.js';
 import { clearCart, flushCart } from '../lib/cart.js';
 import { formatRupiah } from '../lib/format.js';
+import { KURIR } from '../lib/orders.js';
 import { getToken } from '../lib/session.js';
-
-const KURIR = [
-  { value: 'JNT', label: 'J&T' },
-  { value: 'JNE', label: 'JNE' },
-];
-const METODE_BAYAR = [
-  { value: 'BCA', label: 'Transfer BCA' },
-  { value: 'BRI', label: 'Transfer BRI' },
-  { value: 'VIRTUAL_ACCOUNT', label: 'Virtual Account' },
-];
 
 export default function CheckoutPage() {
   const { user, ready } = useSession();
@@ -110,7 +102,7 @@ export default function CheckoutPage() {
             />
           </label>
           <ChoiceField legend="Kurir" name="kurir" options={KURIR} />
-          <ChoiceField legend="Metode pembayaran (simulasi)" name="metode_bayar" options={METODE_BAYAR} />
+          <PaymentField />
         </div>
 
         <aside className="h-fit bg-neutral-100 p-6">

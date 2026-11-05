@@ -1,4 +1,11 @@
 import { useFetch } from '../hooks/useFetch.js';
+import { HERO_SLIDES, kreditUrl } from '../lib/heroSlides.js';
+import { SEGMENT_CARDS } from '../lib/segmentCards.js';
+
+const FOTO_BERANDA = [
+  ...HERO_SLIDES.map(({ judul, fotografer, username }) => ({ judul, fotografer, username })),
+  ...SEGMENT_CARDS.map(({ label, fotografer, username }) => ({ judul: label, fotografer, username })),
+];
 
 export default function PhotoCreditsPage() {
   const { data: credits, error, loading } = useFetch('/api/products/photo-credits');
@@ -9,18 +16,6 @@ export default function PhotoCreditsPage() {
       <p className="mt-4 text-neutral-600">
         Foto produk berasal dari Unsplash, Pexels, dan Wikimedia Commons, dipakai sesuai lisensinya.
         Foto berlabel ilustrasi menunjukkan seri atau model yang berbeda dari produk.
-      </p>
-      <p className="mt-4 text-neutral-600">
-        Model 3D:{' '}
-        <a
-          href="https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/MaterialsVariantsShoe"
-          target="_blank"
-          rel="noreferrer"
-          className="underline hover:text-accent"
-        >
-          Materials Variants Shoe
-        </a>{' '}
-        oleh Shopify, CC BY 4.0. Tekstur diperkecil agar lebih ringan.
       </p>
 
       {loading ? (
@@ -62,6 +57,19 @@ export default function PhotoCreditsPage() {
           ))}
         </ul>
       )}
+
+      <h2 className="mt-10 font-display text-2xl font-black uppercase tracking-tight">Foto Beranda</h2>
+      <ul className="mt-4 border-t border-neutral-200">
+        {FOTO_BERANDA.map((foto) => (
+          <li key={foto.judul} className="border-b border-neutral-200 py-3 text-sm">
+            <span className="font-semibold">{foto.judul}</span> · Foto oleh{' '}
+            <a href={kreditUrl(foto.username)} target="_blank" rel="noreferrer" className="underline hover:text-accent">
+              {foto.fotografer}
+            </a>{' '}
+            di Unsplash
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

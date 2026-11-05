@@ -6,6 +6,8 @@ import CheckoutSuccessPage from './pages/CheckoutSuccessPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import OrderDetailPage from './pages/OrderDetailPage.jsx';
+import OrdersPage from './pages/OrdersPage.jsx';
 import PhotoCreditsPage from './pages/PhotoCreditsPage.jsx';
 import ProductDetailPage from './pages/ProductDetailPage.jsx';
 import ProductsPage from './pages/ProductsPage.jsx';
@@ -21,6 +23,8 @@ export default function App() {
         <Route path="keranjang" element={<CartPage />} />
         <Route path="checkout" element={<CheckoutPage />} />
         <Route path="checkout/selesai" element={<CheckoutSuccessPage />} />
+        <Route path="pesanan" element={<OrdersPage />} />
+        <Route path="pesanan/:noOrder" element={<OrderDetailPage />} />
         <Route path="masuk" element={<LoginPage />} />
         <Route path="daftar" element={<RegisterPage />} />
         <Route path="kredit-foto" element={<PhotoCreditsPage />} />

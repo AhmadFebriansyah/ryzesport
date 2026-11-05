@@ -5,8 +5,12 @@ import { useFetch } from './useFetch.js';
 
 export function useCartItems() {
   const cart = useCart();
-  // Detail cukup diambil sekali. Mengubah atau menghapus item tidak perlu memuat ulang daftar.
-  const [requestedIds] = useState(() => cart.map((item) => item.variantId));
+  // Mengubah atau menghapus item tidak perlu memuat ulang daftar. Detail hanya diambil lagi jika ada
+  // item baru, misalnya keranjang dari database yang tiba setelah halaman dimuat.
+  const [requestedIds, setRequestedIds] = useState(() => cart.map((item) => item.variantId));
+  if (cart.some((item) => !requestedIds.includes(item.variantId))) {
+    setRequestedIds(cart.map((item) => item.variantId));
+  }
   const { data: variants, error, loading } = useFetch(
     requestedIds.length > 0 ? `/api/variants?ids=${requestedIds.join(',')}` : null,
   );

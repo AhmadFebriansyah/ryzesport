@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { removeFromCart, setCartQty } from '../lib/cart.js';
 import { formatRupiah } from '../lib/format.js';
+import IconTrash from './IconTrash.jsx';
 
 const STEP_BUTTON = 'h-11 w-11 font-semibold disabled:cursor-not-allowed disabled:text-neutral-300';
 
@@ -69,10 +70,12 @@ export default function CartItem({ item }) {
           )}
           <button
             type="button"
+            aria-label={`Hapus ${namaLengkap}`}
+            title="Hapus"
             onClick={() => removeFromCart([item.id])}
-            className="min-h-11 text-sm font-semibold underline hover:text-accent"
+            className="flex size-11 items-center justify-center border border-neutral-300 hover:border-neutral-950 hover:bg-neutral-950 hover:text-white"
           >
-            Hapus
+            <IconTrash className="size-5" />
           </button>
         </div>
       </div>

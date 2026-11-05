@@ -1,9 +1,9 @@
 import { randomBytes } from 'node:crypto';
-import { withTransaction } from '../db/pool.js';
+import { query, withTransaction } from '../db/pool.js';
 
 const TELEPON_PATTERN = /^[0-9+\-\s]{8,20}$/;
 const KURIR = ['JNT', 'JNE'];
-const METODE_BAYAR = ['BCA', 'BRI', 'VIRTUAL_ACCOUNT'];
+const METODE_BAYAR = ['BCA', 'BRI', 'MANDIRI', 'BSI', 'QRIS'];
 
 class CheckoutError extends Error {
   constructor(status, message) {
@@ -140,4 +140,90 @@ export async function createOrder(req, res) {
     }
     throw err;
   }
+}
+
+const NO_ORDER_PATTERN = /^RS-\d{8}-[0-9A-F]{8}$/;
+const MAX_PESANAN = 50;
+
+// Satu kueri untuk semua pesanan, agar daftar tidak menjalankan kueri per pesanan.
+async function readItems(orderIds) {
+  const { rows } = await query(
+    `SELECT
+       oi.id,
+       oi.order_id,
+       oi.qty,
+       oi.harga_saat_beli,
+       v.ukuran::float AS ukuran,
+       pc.nama_warna,
+       pc.foto_url,
+       p.slug,
+       b.nama || ' ' || p.nama AS nama
+     FROM t_order_items oi
+     JOIN t_product_variants v ON v.id = oi.variant_id
+     JOIN t_product_colors pc ON pc.id = v.color_id
+     JOIN t_products p ON p.id = pc.product_id
+     JOIN t_brands b ON b.id = p.brand_id
+     WHERE oi.order_id = ANY($1::bigint[])
+     ORDER BY oi.id`,
+    [orderIds],
+  );
+
+  const items = new Map();
+  for (const { order_id: orderId, ...item } of rows) {
+    items.set(orderId, [...(items.get(orderId) ?? []), item]);
+  }
+  return items;
+}
+
+export async function listOrders(req, res) {
+  const { rows } = await query(
+    `SELECT id, no_order, status, total, no_resi, created_at
+     FROM t_orders
+     WHERE user_id = $1
+     ORDER BY created_at DESC, id DESC
+     LIMIT $2`,
+    [req.userId, MAX_PESANAN],
+  );
+  const items = await readItems(rows.map((order) => order.id));
+
+  res.json({
+    data: rows.map(({ id, ...order }) => ({ ...order, items: items.get(id) ?? [] })),
+  });
+}
+
+export async function getOrder(req, res) {
+  const { noOrder } = req.params;
+
+  if (!NO_ORDER_PATTERN.test(noOrder)) {
+    return res.status(400).json({ message: 'Nomor pesanan tidak valid.' });
+  }
+
+  // Pesanan milik user lain dijawab 404, agar keberadaannya tidak terbongkar.
+  const { rows } = await query(
+    `SELECT
+       id, no_order, status, total, no_resi, kurir, metode_bayar,
+       nama_penerima, telepon_penerima, alamat_penerima, created_at
+     FROM t_orders
+     WHERE no_order = $1 AND user_id = $2`,
+    [noOrder, req.userId],
+  );
+  if (rows.length === 0) {
+    return res.status(404).json({ message: 'Pesanan tidak ditemukan.' });
+  }
+
+  const { id, ...order } = rows[0];
+  const [items, riwayat] = await Promise.all([
+    readItems([id]),
+    query(
+      `SELECT id, status, catatan, waktu
+       FROM t_order_status_history
+       WHERE order_id = $1
+       ORDER BY waktu, id`,
+      [id],
+    ),
+  ]);
+
+  return res.json({
+    data: { ...order, items: items.get(id) ?? [], riwayat: riwayat.rows },
+  });
 }

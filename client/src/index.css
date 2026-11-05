@@ -9,3 +9,115 @@
 body {
   @apply bg-white text-neutral-950 antialiased;
 }
+
+.hero-masuk-dari-kiri,
+.hero-masuk-dari-kanan,
+.hero-keluar-ke-kanan,
+.hero-keluar-ke-kiri {
+  animation: 700ms ease-in-out both;
+}
+
+.hero-masuk-dari-kiri {
+  animation-name: hero-dari-kiri;
+}
+
+.hero-masuk-dari-kanan {
+  animation-name: hero-dari-kanan;
+}
+
+.hero-keluar-ke-kanan {
+  animation-name: hero-ke-kanan;
+}
+
+.hero-keluar-ke-kiri {
+  animation-name: hero-ke-kiri;
+}
+
+@keyframes hero-dari-kiri {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes hero-dari-kanan {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes hero-ke-kanan {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes hero-ke-kiri {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-masuk-dari-kiri,
+  .hero-masuk-dari-kanan,
+  .hero-keluar-ke-kanan,
+  .hero-keluar-ke-kiri {
+    animation: none;
+  }
+}
+
+.toast-masuk {
+  animation: toast-masuk 300ms ease-out both;
+}
+
+@keyframes toast-masuk {
+  from {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+  }
+}
+
+/* Badge ikut membesar sesaat ketika foto produk tiba di keranjang. */
+.badge-pop {
+  animation: badge-pop 400ms ease-out 600ms both;
+}
+
+@keyframes badge-pop {
+  50% {
+    transform: scale(1.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-masuk,
+  .badge-pop {
+    animation: none;
+  }
+}
+
+/* Dua slider ditumpuk: hanya kenopnya yang bisa disentuh, agar keduanya bisa digeser. */
+.slider-harga {
+  @apply pointer-events-none absolute inset-0 h-5 w-full appearance-none bg-transparent;
+}
+
+.slider-harga::-webkit-slider-thumb {
+  @apply pointer-events-auto size-5 cursor-pointer appearance-none rounded-full border-2 border-white bg-neutral-950 shadow;
+}
+
+.slider-harga::-moz-range-thumb {
+  @apply pointer-events-auto size-5 cursor-pointer rounded-full border-2 border-white bg-neutral-950 shadow;
+}
+
+.hero-lapis {
+  background:
+    linear-gradient(to bottom, rgb(0 0 0 / 0.45), transparent 22%),
+    linear-gradient(to top, var(--dasar) 38%, transparent 62%);
+}
+
+@media (min-width: 48rem) {
+  .hero-lapis {
+    background:
+      linear-gradient(to bottom, rgb(0 0 0 / 0.35), transparent 22%),
+      linear-gradient(to right, var(--dasar) 28%, transparent 55%);
+  }
+}
