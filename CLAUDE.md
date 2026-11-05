@@ -13,14 +13,13 @@ Aplikasi terdiri dari 2 bagian:
 - **Database:** PostgreSQL di Neon (driver `pg`)
 - **Auth:** JWT + bcrypt untuk hash password
 - **Gambar produk:** foto Unsplash ditampilkan langsung dari `images.unsplash.com` (wajib menurut panduan API-nya, jangan disalin ke proyek). Foto Pexels dan Wikimedia Commons ada di `client/public/produk`. `UNSPLASH_ACCESS_KEY` di `server/.env` hanya untuk mencari foto.
-- **Deploy:** Vercel. Build `client/dist` sebagai situs statis, dan `api/index.js` menjalankan `server/app.js` sebagai fungsi serverless (`vercel.json`). Yang wajib diisi di Vercel: `DATABASE_URL` dan `JWT_SECRET`.
+- **Deploy:** Vercel Services (Beta). `vercel.json` mendefinisikan service `client` (Vite, publik di `/`) dan `server` (Express dengan entrypoint `server/app.js`, publik di `/api`). Yang wajib diisi di Vercel: `DATABASE_URL` dan `JWT_SECRET`. Uji lokal dengan `vercel dev -L`.
 
 ## Struktur Folder
 
 ```
 ryzesport/
 ├── client/        # React storefront
-├── api/           # Pintu masuk serverless Vercel
 ├── server/        # Express API
 │   ├── routes/
 │   ├── controllers/
